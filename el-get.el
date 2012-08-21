@@ -461,7 +461,7 @@ which defaults to the first element in `el-get-recipe-path'."
     (el-get-verbose-message "el-get-init: " init-deps)
     (loop for p in init-deps do (el-get-do-init p) collect p)))
 
-(defun el-get-do-init (package &optional package-status-alist)
+(defun el-get-do-init (package)
   "Make the named PACKAGE available for use.
 
 Add PACKAGE's directory (or `:load-path' if specified) to the
@@ -469,11 +469,10 @@ Add PACKAGE's directory (or `:load-path' if specified) to the
 `Info-directory-list', and `require' its `:features'.  Will be
 called by `el-get' (usually at startup) for each installed package."
   (when el-get-auto-update-cached-recipes
-    (el-get-merge-properties-into-status package package-status-alist :noerror t))
+    (el-get-merge-properties-into-status package nil :noerror t))
   (condition-case err
       (let* ((el-get-sources (el-get-package-status-recipes))
-             (source
-              (el-get-read-package-status-recipe package package-status-alist))
+             (source   (el-get-read-package-status-recipe package))
              (method   (el-get-package-method source))
              (loads    (el-get-as-list (plist-get source :load)))
              (autoloads (plist-get source :autoloads))
