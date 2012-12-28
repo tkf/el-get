@@ -260,6 +260,9 @@ Use this to modify environment variable such as $PATH or $PYTHONPATH."
 Please run this command before sending a pull request.
 Usage: M-x el-get-check-recipe RET
 
+You can run this function from checker script like this:
+    test/check-recipe.el PATH/TO/RECIPE.rcp
+
 When used as a lisp function, FILE-OR-BUFFER must be a buffer
 object or a file path."
   (interactive (list (current-buffer)))
