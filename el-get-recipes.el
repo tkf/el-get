@@ -292,13 +292,23 @@ object or a file path."
                           "* Property %S is for user.  Use %S instead.\n"
                           key alt))
                  (incf numerror)))
-      (destructuring-bind (&key type url
+      (destructuring-bind (&key type url autoloads features
                                 &allow-other-keys)
           recipe
         ;; Is github type used?
         (when (and (eq type 'git) (string-match "//github.com/" url))
           (insert "* Use `:type github' for github type recipe\n")
-          (incf numerror)))
+          (incf numerror))
+        ;; Warn when `:autoloads nil' is specified.
+        (when (and (null autoloads) (plist-member recipe :autoloads))
+          (insert "* WARNING: Are you sure you don't need autoloads?
+  This property should be used only when the library takes care of
+  the autoload.\n"))
+        ;; Warn when `:features t' is specified
+        (when features
+          (insert "* WARNING: Are you sure you need features?
+  If this library has `;;;###autoload' comment (a.k.a autoload cookie),
+  you don't need `:features'.\n")))
       (insert (format "%s error(s) found." numerror)))
     numerror))
 
