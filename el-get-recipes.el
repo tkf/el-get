@@ -255,4 +255,48 @@ Use this to modify environment variable such as $PATH or $PYTHONPATH."
                                   :test #'string= :from-end t)
                ":")))
 
+(defun el-get-check-recipe (file-or-buffer)
+  "Check the format of the recipe.
+Please run this command before sending a pull request.
+Usage: M-x el-get-check-recipe RET
+
+When used as a lisp function, FILE-OR-BUFFER must be a buffer
+object or a file path."
+  (interactive (list (current-buffer)))
+  (if (bufferp file-or-buffer)
+      (with-current-buffer file-or-buffer
+        (el-get-check-recipe-1))
+    (with-temp-buffer
+      (erase-buffer)
+      (insert-file-contents file-or-buffer)
+      (el-get-check-recipe-1))))
+
+(defun el-get-check-recipe-1 ()
+  (let ((recipe (save-excursion
+                  (goto-char (point-min))
+                  (read (current-buffer))))
+        (numerror 0)
+        (buffer (get-buffer-create "*el-get check recipe*")))
+    (display-buffer buffer)
+    (with-current-buffer buffer
+      (erase-buffer)
+      ;; Check if userspace property is used.
+      (loop for key in '(:before :after)
+            for alt in '(:prepare :post-init)
+            when (plist-get recipe key)
+            do (progn
+                 (insert (format
+                          "* Property %S is for user.  Use %S instead.\n"
+                          key alt))
+                 (incf numerror)))
+      (destructuring-bind (&key type url
+                                &allow-other-keys)
+          recipe
+        ;; Is github type used?
+        (when (and (eq type 'git) (string-match "//github.com/" url))
+          (insert "* Use `:type github' for github type recipe\n")
+          (incf numerror)))
+      (insert (format "%s error(s) found." numerror)))
+    numerror))
+
 (provide 'el-get-recipes)
