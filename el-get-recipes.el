@@ -268,13 +268,13 @@ object or a file path."
   (interactive (list (current-buffer)))
   (if (bufferp file-or-buffer)
       (with-current-buffer file-or-buffer
-        (el-get-check-recipe-1))
+        (el-get-check-recipe-in-current-buffer))
     (with-temp-buffer
       (erase-buffer)
       (insert-file-contents file-or-buffer)
-      (el-get-check-recipe-1))))
+      (el-get-check-recipe-in-current-buffer))))
 
-(defun el-get-check-recipe-1 ()
+(defun el-get-check-recipe-in-current-buffer ()
   (let ((recipe (save-excursion
                   (goto-char (point-min))
                   (read (current-buffer))))
