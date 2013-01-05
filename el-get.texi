@@ -994,7 +994,7 @@ example:
 @section Recipe checker
 
 There are two ways to run recipe checker.  One is to run it as an Emacs
-command. Run @code{M-x el-get-check-recipe} in the buffer opening the
+command. Run @command{el-get-check-recipe} in the buffer opening the
 recipe to be checked.  You can also use a script to run the checker.
 This is convenient if you want to check multiple recipes at once.
 
